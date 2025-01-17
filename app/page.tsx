@@ -1,5 +1,6 @@
 import Destination from '@/components/Home/Destination/Destination'
 import Home from '@/components/Home/Home'
+import Hotel from '@/components/Home/Hotel/Hotel'
 import React from 'react'
 
 const HomePage = () => {
@@ -7,6 +8,7 @@ const HomePage = () => {
     <div>
       <Home />
       <Destination />
+      <Hotel />
     </div>
   )
 }
