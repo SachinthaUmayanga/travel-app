@@ -1,32 +1,32 @@
 export const navLinks = [
     {
         id:1,
-        url: '#',
+        url: '/',
         label: 'Home',
     },
     {
         id:2,
-        url: '#',
+        url: '/about',
         label: 'About',
     },
     {
         id:3,
-        url: '#',
+        url: '/destination',
         label: 'Destination',
     },
     {
         id:4,
-        url: '#',
+        url: '/blog',
         label: 'Blog',
     },
     {
         id:5,
-        url: '#',
+        url: '/admin', // Will redirect to login if not admin, or dashboard if admin
         label: 'Dashboard',
     },
     {
         id:6,
-        url: '#',
+        url: '/contact',
         label: 'Contact',
     },
 ]

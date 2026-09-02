@@ -19,6 +19,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <Link href="/admin" className="block px-4 py-2 rounded hover:bg-gray-800">
             Dashboard
           </Link>
+          <Link href="/admin/pages" className="block px-4 py-2 rounded hover:bg-gray-800">
+            Static Pages
+          </Link>
+          <Link href="/admin/blog" className="block px-4 py-2 rounded hover:bg-gray-800">
+            Blog Posts
+          </Link>
           <Link href="/admin/destinations" className="block px-4 py-2 rounded hover:bg-gray-800">
             Destinations
           </Link>

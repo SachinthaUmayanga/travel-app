@@ -106,3 +106,21 @@ model VerificationToken {
  
   @@id([identifier, token])
 }
+
+model PageContent {
+  id        Int      @id @default(autoincrement())
+  pageName  String   @unique // e.g. 'about', 'contact'
+  title     String
+  content   String
+  updatedAt DateTime @updatedAt
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  image     String
+  author    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
