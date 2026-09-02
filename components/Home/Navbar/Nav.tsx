@@ -108,15 +108,17 @@ const Nav = ({openNav}:Props) => {
         <div className={`${navBg ? 'bg-blue-950 shadow-md' : 'fixed'} transition-all duration-200 h-[12vh] z-[1000] fixed w-full`}>
             <div className='flex items-center h-full justify-between w-[90%] xl:w-[80%] mx-auto'>
                 {/* Logo */}
-                <div className='flex items-center space-x-2'>
-                    <div className='w-10 h-10 bg-rose-500 rounded-full flex items-center justify-center flex-col'>
-                        <TbAirBalloon className='w-6 h-6 text-white' />
-                    </div>
+                <Link href="/">
+                    <div className='flex items-center space-x-2 cursor-pointer'>
+                        <div className='w-10 h-10 bg-rose-500 rounded-full flex items-center justify-center flex-col'>
+                            <TbAirBalloon className='w-6 h-6 text-white' />
+                        </div>
 
-                    <h1 className='text-xl md:text-2xl text-white uppercase font-bold'>
-                        Travel.
-                    </h1>
-                </div>
+                        <h1 className='text-xl md:text-2xl text-white uppercase font-bold'>
+                            Travel.
+                        </h1>
+                    </div>
+                </Link>
 
                 {/* Navbar */}
                 <div className='hidden lg:flex items-center space-x-10'>
