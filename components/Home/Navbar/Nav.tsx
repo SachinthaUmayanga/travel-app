@@ -4,6 +4,79 @@ import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { HiBars3BottomRight } from 'react-icons/hi2'
 import { TbAirBalloon } from 'react-icons/tb'
+import { useSession, signOut } from 'next-auth/react'
+
+const AuthButton = () => {
+    const { data: session, status } = useSession();
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+
+    if (status === "loading") {
+        return <div className="text-white">...</div>;
+    }
+
+    if (session) {
+        return (
+            <div className="relative flex items-center space-x-3">
+                {(session.user as any)?.role === 'admin' && (
+                    <Link href="/admin">
+                        <button className='md:px-4 md:py-2.5 px-2 py-2 text-white border border-white hover:bg-white hover:text-black transition-all duration-200 rounded-lg hidden lg:block'>
+                            Dashboard
+                        </button>
+                    </Link>
+                )}
+                
+                <div 
+                    className="relative cursor-pointer hover:opacity-80 transition"
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                >
+                    {session.user?.image ? (
+                        <img src={session.user.image} alt="Profile" className="w-10 h-10 rounded-full border-2 border-yellow-300" />
+                    ) : (
+                        <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold border-2 border-yellow-300">
+                            {session.user?.name?.charAt(0) || "U"}
+                        </div>
+                    )}
+                </div>
+
+                {/* Dropdown Menu */}
+                {dropdownOpen && (
+                    <div className="absolute right-0 top-14 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                        <div className="px-4 py-2 border-b border-gray-100">
+                            <p className="text-sm font-medium text-gray-900 truncate">
+                                {session.user?.name || "User"}
+                            </p>
+                            <p className="text-xs text-gray-500 truncate">
+                                {session.user?.email || ""}
+                            </p>
+                        </div>
+                        <Link 
+                            href="/profile"
+                            onClick={() => setDropdownOpen(false)}
+                        >
+                            <div className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                Account Settings
+                            </div>
+                        </Link>
+                        <button 
+                            onClick={() => signOut({ callbackUrl: '/' })} 
+                            className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                        >
+                            Logout
+                        </button>
+                    </div>
+                )}
+            </div>
+        );
+    }
+
+    return (
+        <Link href="/admin/login">
+            <button className='md:px-8 md:py-2.5 px-4 py-2 text-white border border-white hover:bg-white hover:text-black transition-all duration-200 rounded-lg hidden lg:block'>
+                Login
+            </button>
+        </Link>
+    );
+};
 
 type Props = {
     openNav: () => void
@@ -54,6 +127,7 @@ const Nav = ({openNav}:Props) => {
                     <button className='md:px-12 md:py-2.5 px-8 py-2 text-black text-base bg-white hover:bg-gray-200 transition-all duration-200 rounded-lg'>
                         Book Now
                     </button>
+                    <AuthButton />
 
                     {/* Burger Menu */}
                     <HiBars3BottomRight onClick={openNav} className='w-8 h-8 cursor-pointer text-white lg:hidden' />
