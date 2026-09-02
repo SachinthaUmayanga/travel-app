@@ -14,7 +14,11 @@ type Props = {
     }
 }
 
+import { useCurrency } from '@/components/Helper/CurrencyProvider';
+
 const HotelCard = ({hotel}: Props) => {
+    const { formatPrice, isLoading } = useCurrency();
+    
     return (
         <div>
             <div className='relative h-[300px] w-full rounded-lg cursor-pointer group overflow-hidden'>
@@ -54,7 +58,9 @@ const HotelCard = ({hotel}: Props) => {
                 {/* Prices */}
                 <p className='mt-3 text-gray-700 font-medium'>
                     Starting from{" "} 
-                    <span className='text-blue-600 font-bold'>${hotel.price}</span>
+                    <span className='text-blue-600 font-bold'>
+                        {isLoading ? "..." : formatPrice(hotel.price)}
+                    </span>
                 </p>
             </div>
         </div>

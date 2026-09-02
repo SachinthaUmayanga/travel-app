@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import {Poppins} from 'next/font/google';
 import "./globals.css";
 import AuthProvider from "@/components/Helper/AuthProvider";
+import { CurrencyProvider } from "@/components/Helper/CurrencyProvider";
 
 const font = Poppins ({
   weight: ['100','200','300','400','500','600','700','800','900'],
@@ -22,7 +23,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${font.className} antialiased`}>
         <AuthProvider>
-          {children}
+          <CurrencyProvider>
+            {children}
+          </CurrencyProvider>
         </AuthProvider>
       </body>
     </html>
