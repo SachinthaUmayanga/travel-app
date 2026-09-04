@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { FaStar } from 'react-icons/fa'
 import ReviewSlider from './ReviewSlider'
 import ReviewFormModal from './ReviewFormModal'
@@ -9,6 +9,29 @@ const Review = () => {
     const { data: session } = useSession()
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [refreshKey, setRefreshKey] = useState(0)
+    const [overallRating, setOverallRating] = useState(0)
+    const [reviewCount, setReviewCount] = useState(0)
+
+    useEffect(() => {
+        const fetchReviewsStats = async () => {
+            try {
+                const res = await fetch('/api/reviews')
+                if (res.ok) {
+                    const data = await res.json()
+                    setReviewCount(data.length)
+                    if (data.length > 0) {
+                        const total = data.reduce((acc: number, curr: any) => acc + (curr.rating || 5), 0)
+                        setOverallRating(Number((total / data.length).toFixed(1)))
+                    } else {
+                        setOverallRating(5.0)
+                    }
+                }
+            } catch (error) {
+                console.error("Failed to fetch review stats:", error)
+            }
+        }
+        fetchReviewsStats()
+    }, [refreshKey])
 
     const handleReviewAdded = () => {
         setRefreshKey(prev => prev + 1)
@@ -23,20 +46,18 @@ const Review = () => {
                         What our customers are saying us?
                     </h1>
                     <p className='mt-6 text-gray-200'>
-                        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorum saepe sit hic doloribus mollitia, itaque ratione autem assumenda consequatur, facere dolorem similique soluta, quaerat maxime dolor fugit! Optio, quisquam ipsam.
+                        We pride ourselves on delivering unforgettable travel experiences. Read what our valued customers have to say about our world-class hotels and guided tours. Your satisfaction is our highest priority.
                     </p>
 
                     {/* Ratings */}
                     <div className='mt-6 flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-6'>
                         <div>
-                            <p className='text-2xl font-bold text-white'>4.88</p>
-                            <p className='text-white mb-2'>Overall Rating</p>
+                            <p className='text-2xl font-bold text-white'>{overallRating.toFixed(1)}</p>
+                            <p className='text-white mb-2'>Overall Rating ({reviewCount} Reviews)</p>
                             <div className='flex items-center'>
-                                <FaStar className='text-white' />
-                                <FaStar className='text-white' />
-                                <FaStar className='text-white' />
-                                <FaStar className='text-white' />
-                                <FaStar className='text-white' />
+                                {[...Array(5)].map((_, i) => (
+                                    <FaStar key={i} className={i < Math.round(overallRating) ? 'text-yellow-400' : 'text-gray-400'} />
+                                ))}
                             </div>
                         </div>
                         {session?.user && (

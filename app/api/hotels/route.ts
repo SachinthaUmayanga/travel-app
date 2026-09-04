@@ -3,7 +3,16 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET() {
   try {
-    const hotels = await prisma.hotel.findMany();
+    const hotels = await prisma.$queryRawUnsafe(`
+      SELECT 
+        h.id, h.image, h.name, h.location, h.price,
+        ROUND(COALESCE(AVG(r.rating), 0), 1)::float as "rating", 
+        COUNT(r.id)::int || ' Reviews' as "reviews" 
+      FROM "Hotel" h 
+      LEFT JOIN "Review" r ON h.id = r."hotelId" 
+      GROUP BY h.id
+      ORDER BY h.id DESC
+    `);
     return NextResponse.json(hotels);
   } catch (error) {
     console.error("Failed to fetch hotels:", error);
@@ -13,10 +22,14 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const data = await req.json();
-    const hotel = await prisma.hotel.create({ data });
-    return NextResponse.json(hotel);
+    const { name, location, price, image } = await req.json();
+    const result: any = await prisma.$queryRawUnsafe(
+      'INSERT INTO "Hotel" ("name", "location", "price", "image") VALUES ($1, $2, $3, $4) RETURNING *',
+      name, location, price, image
+    );
+    return NextResponse.json(result[0]);
   } catch (error) {
+    console.error("Failed to create hotel:", error);
     return NextResponse.json({ error: "Failed to create hotel" }, { status: 500 });
   }
 }

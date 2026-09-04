@@ -32,7 +32,7 @@ export const POST = auth(async (req) => {
     }
     const session = req.auth;
 
-    const { name, review, rating, image } = await req.json();
+    const { name, review, rating, image, hotelId, tourId } = await req.json();
     
     // Validate rating
     const parsedRating = parseInt(rating);
@@ -43,10 +43,13 @@ export const POST = auth(async (req) => {
     // Use session name if available, else from body
     const userName = session.user.name || name || "Anonymous";
 
+    const parsedHotelId = hotelId ? parseInt(hotelId) : null;
+    const parsedTourId = tourId ? parseInt(tourId) : null;
+
     // Use raw SQL because Prisma Client isn't updated locally due to Windows lock
     const result: any = await prisma.$queryRawUnsafe(
-      'INSERT INTO "Review" ("name", "review", "rating", "image", "isFeatured") VALUES ($1, $2, $3, $4, false) RETURNING *',
-      userName, review, validRating, userImage
+      'INSERT INTO "Review" ("name", "review", "rating", "image", "isFeatured", "hotelId", "tourId") VALUES ($1, $2, $3, $4, false, $5, $6) RETURNING *',
+      userName, review, validRating, userImage, parsedHotelId, parsedTourId
     );
     const newReview = result[0];
 

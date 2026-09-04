@@ -20,9 +20,10 @@ model Hotel {
   image    String
   name     String
   location String
-  rating   Float
-  reviews  String
-  price    String
+  rating      Float?
+  reviews     String?
+  price       String
+  reviewsList Review[]
 }
 
 model Tour {
@@ -32,9 +33,10 @@ model Tour {
   location String
   time     String
   type     String
-  rating   Float
-  reviews  String
-  price    String
+  rating      Float?
+  reviews     String?
+  price       String
+  reviewsList Review[]
 }
 
 model Review {
@@ -44,6 +46,10 @@ model Review {
   image      String
   rating     Int     @default(5)
   isFeatured Boolean @default(false)
+  hotelId    Int?
+  hotel      Hotel?  @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  tourId     Int?
+  tour       Tour?   @relation(fields: [tourId], references: [id], onDelete: Cascade)
 }
 
 model Admin {

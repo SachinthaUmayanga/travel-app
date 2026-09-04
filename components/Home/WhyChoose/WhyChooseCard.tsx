@@ -23,7 +23,7 @@ const WhyChooseCard = ({ image, title }: Props) => {
                 {title}
             </h1>
             <p className='mt-2 text-center text-xs font-medium text-gray-700'>
-                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quos quae nobis fugit repellendus quia esse placeat maxime nemo.
+                Experience the best in travel with our top-rated services tailored just for you. We guarantee satisfaction and unforgettable memories on every journey.
             </p>
         </div>
     )
