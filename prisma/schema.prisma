@@ -42,6 +42,7 @@ model Review {
   name   String
   review String
   image  String
+  rating Int    @default(5)
 }
 
 model Admin {

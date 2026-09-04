@@ -3,7 +3,9 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET() {
   try {
-    const reviews = await prisma.review.findMany();
+    const reviews = await prisma.review.findMany({
+      orderBy: { id: 'desc' }
+    });
     return NextResponse.json(reviews);
   } catch (error) {
     console.error("Failed to fetch reviews:", error);
@@ -13,10 +15,27 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const data = await req.json();
-    const review = await prisma.review.create({ data });
-    return NextResponse.json(review);
+    const { name, review, rating, image } = await req.json();
+    
+    // Validate rating
+    const parsedRating = parseInt(rating);
+    const validRating = !isNaN(parsedRating) && parsedRating >= 1 && parsedRating <= 5 ? parsedRating : 5;
+
+    // Use default image if none provided
+    const userImage = image || "/images/u1.jpg";
+
+    // @ts-ignore - Prisma client may not be updated locally due to Windows lock
+    const newReview = await prisma.review.create({
+      data: {
+        name,
+        review,
+        rating: validRating,
+        image: userImage
+      }
+    });
+    return NextResponse.json(newReview);
   } catch (error) {
+    console.error("Failed to create review:", error);
     return NextResponse.json({ error: "Failed to create review" }, { status: 500 });
   }
 }
