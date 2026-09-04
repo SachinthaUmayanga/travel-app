@@ -1,6 +1,7 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { FaStar, FaTimes } from 'react-icons/fa'
+import { useSession } from 'next-auth/react'
 
 interface ReviewFormModalProps {
     isOpen: boolean;
@@ -9,11 +10,19 @@ interface ReviewFormModalProps {
 }
 
 const ReviewFormModal: React.FC<ReviewFormModalProps> = ({ isOpen, onClose, onReviewAdded }) => {
+    const { data: session } = useSession()
+    
     const [name, setName] = useState('')
     const [reviewText, setReviewText] = useState('')
     const [rating, setRating] = useState(5)
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [hover, setHover] = useState<number | null>(null)
+
+    useEffect(() => {
+        if (session?.user?.name) {
+            setName(session.user.name)
+        }
+    }, [session])
 
     if (!isOpen) return null;
 
@@ -31,16 +40,18 @@ const ReviewFormModal: React.FC<ReviewFormModalProps> = ({ isOpen, onClose, onRe
                 body: JSON.stringify({
                     name,
                     review: reviewText,
-                    rating
-                })
+                    rating,
+                    image: session?.user?.image || undefined
+                }),
+                credentials: 'include'
             })
 
             if (res.ok) {
                 onReviewAdded()
                 onClose()
-                setName('')
                 setReviewText('')
                 setRating(5)
+                // name remains the same as session name
             }
         } catch (error) {
             console.error("Failed to submit review", error)
@@ -69,7 +80,8 @@ const ReviewFormModal: React.FC<ReviewFormModalProps> = ({ isOpen, onClose, onRe
                             required
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#13357b] focus:border-transparent outline-none transition-all text-black"
+                            disabled={!!session?.user?.name}
+                            className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#13357b] focus:border-transparent outline-none transition-all text-black ${session?.user?.name ? 'bg-gray-100 text-gray-600 cursor-not-allowed' : ''}`}
                             placeholder="John Doe"
                         />
                     </div>

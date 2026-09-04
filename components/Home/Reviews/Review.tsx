@@ -3,8 +3,10 @@ import React, { useState } from 'react'
 import { FaStar } from 'react-icons/fa'
 import ReviewSlider from './ReviewSlider'
 import ReviewFormModal from './ReviewFormModal'
+import { useSession } from 'next-auth/react'
 
 const Review = () => {
+    const { data: session } = useSession()
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [refreshKey, setRefreshKey] = useState(0)
 
@@ -37,12 +39,14 @@ const Review = () => {
                                 <FaStar className='text-white' />
                             </div>
                         </div>
-                        <button 
-                            onClick={() => setIsModalOpen(true)}
-                            className="bg-white text-[#13357b] font-bold py-2 px-6 rounded-lg shadow-lg hover:bg-gray-100 transition-colors"
-                        >
-                            Leave a Review
-                        </button>
+                        {session?.user && (
+                            <button 
+                                onClick={() => setIsModalOpen(true)}
+                                className="bg-white text-[#13357b] font-bold py-2 px-6 rounded-lg shadow-lg hover:bg-gray-100 transition-colors"
+                            >
+                                Leave a Review
+                            </button>
+                        )}
                     </div>
                 </div>
 

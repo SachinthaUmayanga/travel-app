@@ -24,6 +24,9 @@ export default auth((req) => {
     // Allow users to update their own profile
     if (nextUrl.pathname === '/api/user/profile' && isLoggedIn) return NextResponse.next();
     
+    // Allow users to submit reviews
+    if (nextUrl.pathname === '/api/reviews' && req.method === 'POST' && isLoggedIn) return NextResponse.next();
+    
     // Otherwise, require admin for all other mutations (like adding tours, hotels, etc.)
     if (!isLoggedIn || role !== 'admin') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

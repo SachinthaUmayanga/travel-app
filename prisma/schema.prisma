@@ -38,11 +38,12 @@ model Tour {
 }
 
 model Review {
-  id     Int    @id @default(autoincrement())
-  name   String
-  review String
-  image  String
-  rating Int    @default(5)
+  id         Int     @id @default(autoincrement())
+  name       String
+  review     String
+  image      String
+  rating     Int     @default(5)
+  isFeatured Boolean @default(false)
 }
 
 model Admin {

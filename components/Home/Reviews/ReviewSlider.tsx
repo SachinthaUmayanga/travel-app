@@ -27,7 +27,7 @@ const ReviewSlider: React.FC<ReviewSliderProps> = ({ refreshKey = 0 }) => {
         const fetchReviews = async () => {
             try {
                 setIsLoading(true)
-                const res = await fetch('/api/reviews')
+                const res = await fetch('/api/reviews?featured=true')
                 if (res.ok) {
                     const data = await res.json()
                     setReviews(data)

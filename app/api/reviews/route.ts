@@ -1,11 +1,19 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    const reviews = await prisma.review.findMany({
-      orderBy: { id: 'desc' }
-    });
+    const { searchParams } = new URL(req.url);
+    const featured = searchParams.get('featured') === 'true';
+
+    // Use raw SQL because Prisma Client isn't updated locally due to Windows lock
+    let reviews: any;
+    if (featured) {
+      reviews = await prisma.$queryRawUnsafe('SELECT * FROM "Review" WHERE "isFeatured" = true ORDER BY id DESC');
+    } else {
+      reviews = await prisma.$queryRawUnsafe('SELECT * FROM "Review" ORDER BY id DESC');
+    }
+    
     return NextResponse.json(reviews);
   } catch (error) {
     console.error("Failed to fetch reviews:", error);
@@ -13,32 +21,41 @@ export async function GET() {
   }
 }
 
-export async function POST(req: Request) {
+import { auth } from '@/auth';
+
+export const POST = auth(async (req) => {
   try {
+    console.log("POST /api/reviews hit. req.auth:", req.auth);
+    if (!req.auth?.user) {
+      console.log("No req.auth.user found. Returning 401.");
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    const session = req.auth;
+
     const { name, review, rating, image } = await req.json();
     
     // Validate rating
     const parsedRating = parseInt(rating);
     const validRating = !isNaN(parsedRating) && parsedRating >= 1 && parsedRating <= 5 ? parsedRating : 5;
 
-    // Use default image if none provided
-    const userImage = image || "/images/u1.jpg";
+    // Use session image or default image if none provided
+    const userImage = session.user.image || image || "/images/u1.jpg";
+    // Use session name if available, else from body
+    const userName = session.user.name || name || "Anonymous";
 
-    // @ts-ignore - Prisma client may not be updated locally due to Windows lock
-    const newReview = await prisma.review.create({
-      data: {
-        name,
-        review,
-        rating: validRating,
-        image: userImage
-      }
-    });
+    // Use raw SQL because Prisma Client isn't updated locally due to Windows lock
+    const result: any = await prisma.$queryRawUnsafe(
+      'INSERT INTO "Review" ("name", "review", "rating", "image", "isFeatured") VALUES ($1, $2, $3, $4, false) RETURNING *',
+      userName, review, validRating, userImage
+    );
+    const newReview = result[0];
+
     return NextResponse.json(newReview);
   } catch (error) {
     console.error("Failed to create review:", error);
     return NextResponse.json({ error: "Failed to create review" }, { status: 500 });
   }
-}
+});
 
 export async function DELETE(req: Request) {
   try {
@@ -46,7 +63,7 @@ export async function DELETE(req: Request) {
     const id = searchParams.get('id');
     if (!id) return NextResponse.json({ error: "ID required" }, { status: 400 });
     
-    await prisma.review.delete({ where: { id: parseInt(id) } });
+    await prisma.$executeRawUnsafe('DELETE FROM "Review" WHERE id = $1', parseInt(id));
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ error: "Failed to delete review" }, { status: 500 });
