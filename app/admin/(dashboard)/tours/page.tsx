@@ -7,7 +7,7 @@ export default function ToursAdmin() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ 
-    title: '', location: '', time: '', type: '', price: '', image: '' 
+    title: '', country: '', location: '', time: '', type: '', price: '', image: '' 
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -81,7 +81,7 @@ export default function ToursAdmin() {
     });
     if (res.ok) {
       setShowForm(false);
-      setFormData({ title: '', location: '', time: '', type: '', price: '', image: '' });
+      setFormData({ title: '', country: '', location: '', time: '', type: '', price: '', image: '' });
       setImageFile(null);
       fetchTours();
     } else {
@@ -212,6 +212,7 @@ export default function ToursAdmin() {
               <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ID</th>
               <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Image</th>
               <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Title</th>
+              <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Country</th>
               <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Location</th>
               <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Time/Type</th>
               <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Price</th>
@@ -233,6 +234,9 @@ export default function ToursAdmin() {
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                   <p className="text-gray-900 whitespace-no-wrap">{tour.title}</p>
+                </td>
+                <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                  <p className="text-gray-900 whitespace-no-wrap">{tour.country || '-'}</p>
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                   <p className="text-gray-900 whitespace-no-wrap">{tour.location}</p>

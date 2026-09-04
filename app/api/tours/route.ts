@@ -5,7 +5,7 @@ export async function GET() {
   try {
     const tours = await prisma.$queryRawUnsafe(`
       SELECT 
-        t.id, t.image, t.title, t.location, t.time, t.type, t.price,
+        t.id, t.image, t.title, t.location, t.time, t.type, t.price, t.country,
         ROUND(COALESCE(AVG(r.rating), 0), 1)::float as "rating", 
         COUNT(r.id)::int || ' Reviews' as "reviews" 
       FROM "Tour" t 
@@ -22,10 +22,10 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const { title, location, time, type, price, image } = await req.json();
+    const { title, location, country, time, type, price, image } = await req.json();
     const result: any = await prisma.$queryRawUnsafe(
-      'INSERT INTO "Tour" ("title", "location", "time", "type", "price", "image") VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-      title, location, time, type, price, image
+      'INSERT INTO "Tour" ("title", "location", "country", "time", "type", "price", "image") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+      title, location, country, time, type, price, image
     );
     return NextResponse.json(result[0]);
   } catch (error) {

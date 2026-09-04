@@ -7,7 +7,7 @@ export default function HotelsAdmin() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ 
-    name: '', location: '', price: '', image: '' 
+    name: '', country: '', location: '', price: '', image: '' 
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -81,7 +81,7 @@ export default function HotelsAdmin() {
     });
     if (res.ok) {
       setShowForm(false);
-      setFormData({ name: '', location: '', price: '', image: '' });
+      setFormData({ name: '', country: '', location: '', price: '', image: '' });
       setImageFile(null);
       fetchHotels();
     } else {
@@ -115,6 +115,17 @@ export default function HotelsAdmin() {
                   type="text" 
                   name="name"
                   value={formData.name}
+                  onChange={handleInputChange}
+                  className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700 font-bold mb-2">Country</label>
+                <input 
+                  type="text" 
+                  name="country"
+                  value={formData.country}
                   onChange={handleInputChange}
                   className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-blue-500"
                   required
@@ -190,6 +201,7 @@ export default function HotelsAdmin() {
               <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ID</th>
               <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Image</th>
               <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Name</th>
+              <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Country</th>
               <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Location</th>
               <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Rating</th>
               <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Price</th>
@@ -211,6 +223,9 @@ export default function HotelsAdmin() {
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                   <p className="text-gray-900 whitespace-no-wrap">{hotel.name}</p>
+                </td>
+                <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                  <p className="text-gray-900 whitespace-no-wrap">{hotel.country || '-'}</p>
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                   <p className="text-gray-900 whitespace-no-wrap">{hotel.location}</p>

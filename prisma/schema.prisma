@@ -23,6 +23,7 @@ model Hotel {
   rating      Float?
   reviews     String?
   price       String
+  country     String?
   reviewsList Review[]
 }
 
@@ -36,6 +37,7 @@ model Tour {
   rating      Float?
   reviews     String?
   price       String
+  country     String?
   reviewsList Review[]
 }
 
